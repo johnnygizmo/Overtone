@@ -1,6 +1,6 @@
 # ADR 0005: Self-hosting, CSP, and caching (spike S5, partial)
 
-Status: local findings accepted; GitHub Pages verification pending
+Status: accepted (local findings and GitHub Pages verification both done)
 
 ## Findings (local release build)
 
@@ -32,14 +32,28 @@ Status: local findings accepted; GitHub Pages verification pending
 
 - Release builds use `--no-web-resources-cdn` and the bundled font.
 - Keep the meta CSP above in the app's `index.html`.
-- Content cache-busting stays as planned: fetch `manifest.json` with a
-  timestamp, then every other file with `?v=<hash from the manifest>`.
+- Content is published as immutable `<buildId>/` snapshots plus one small
+  mutable `manifest.json` that points at the current snapshot (PLAN.md 4.5).
+  Do not use `?v=<hash>` for cache-busting; the Pages CDN ignores it.
 - Record every bundled font and library in `docs/third-party.md`
   (Roboto: Apache-2.0; OSMD: BSD-3-Clause).
 
-## Still to verify on GitHub Pages
+## GitHub Pages findings (live, `johnnygizmo.github.io/Overtone/`)
 
-See the checklist in MILESTONES.md M1 (S1/S5): response headers
-(`cache-control`, `age`), how soon a content-only publish is visible to a
-returning browser, and that an app publish is picked up. The spike's S5 page
-(`?spike=S5&auto=1`) reports these.
+- Every response carries `cache-control: max-age=600`, an `etag`, and CDN
+  headers (`x-cache: HIT`/`MISS`, `age`).
+- The CDN ignores query strings. Fetching `manifest.json?t=<new>` returned
+  the same cached object (`age: 64`, then `569`).
+- A deploy did not purge the CDN. Timeline (UTC): content-only commit 17:46:14,
+  app-only commit 17:46:34, successful Pages deploy finished 17:47:13 (the
+  earlier deploy run was cancelled by the later push; the later run contained
+  both changes). At 17:48:35 a returning browser still received the old
+  manifest (`age: 569`) and the old app. At 17:51:05 every file was fresh
+  (`x-cache: MISS`). So an update becomes visible after the old CDN entry
+  expires, up to ten minutes after the deploy.
+- After the CDN refreshed, the S5 page reported content `v2` (new manifest
+  hash, new probe file) and `appBuild: 2`, so both kinds of update arrived.
+- Risk: the manifest and a content file can expire at different times, so a
+  fresh manifest could be paired with a stale file. Immutable snapshots avoid
+  this because every URL under a snapshot is unique.
+- No third-party hosts were contacted; no service worker was registered.

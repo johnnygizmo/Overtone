@@ -215,19 +215,30 @@ production.
 
 ```text
 dist/content/
-  manifest.json
-  index/
-    nodes.json        all note metadata (no bodies), keyed by id
-    graph.json        hierarchy, prerequisites, links, backlinks
-    search.json       title, tags, headings, skills per id
-    media.json        filename -> published path
-  <copied notes and media, same relative paths>
+  manifest.json         the only mutable file: points at the current snapshot
+  <buildId>/            immutable snapshot (buildId = 12 hex of the content hash)
+    index/
+      nodes.json        all note metadata (no bodies), keyed by id
+      graph.json        hierarchy, prerequisites, links, backlinks
+      search.json       title, tags, headings, skills per id
+      media.json        filename -> published path
+    <copied notes and media, same relative paths>
 ```
 
-`manifest.json` lists schema version, content version, build time, and a
-content hash for every published file. The app requests each file with
-`?v=<hash>`, so browsers and GitHub Pages' 10-minute cache cannot serve stale
-content, and unchanged files are reused.
+`manifest.json` lists the schema version, content version, build time,
+`buildId`, and the snapshot `root` (`<buildId>/`), plus a content hash per
+file for integrity checks. The app resolves every other URL under that root.
+
+Why snapshots: GitHub Pages serves files through a CDN with
+`cache-control: max-age=600`, ignores query strings in its cache key, and was
+observed not to purge on deploy (spike S5, ADR 0005). Query-string
+cache-busting (`?v=hash`) therefore does not work, and a stale manifest could
+pair with newer files. With snapshots, any manifest the browser or CDN still
+holds points at a complete, consistent, older snapshot.
+
+The content workflow keeps the newest three snapshots in `gh-pages` and
+prunes older ones, so a manifest cached for up to about ten minutes (plus
+browser cache) never points at a missing directory.
 
 Raw `.md` files are published as authored. The app strips frontmatter with the
 same parser from `overtone_content`.
@@ -251,9 +262,12 @@ Severity is `error` or `warning`. Codes are stable strings (`E-ID-DUP`,
 - `ContentSource` interface with an HTTP implementation. The root URL comes
   from `--dart-define=CONTENT_ROOT` and defaults to `content/` relative to
   the page's base URI.
-- Startup loads `manifest.json` (cache-busted by timestamp), then
-  `index/nodes.json` and `index/graph.json`. Search index and note bodies
-  load on demand.
+- Startup loads `manifest.json` (with a timestamp query to defeat the
+  browser cache), then `<root>/index/nodes.json` and `<root>/index/graph.json`.
+  Search index and note bodies load on demand, all under the snapshot root.
+- Updates reach a returning user within about ten minutes of a deploy (CDN
+  `max-age=600`). The app may offer a "new content available" prompt when a
+  later manifest read shows a different `buildId`.
 - `schemaVersion` outside the range the app supports shows a "content needs a
   newer app" message. An unreadable note shows an error for that item only;
   other content continues to load.
@@ -633,7 +647,7 @@ Pages is configured to deploy from the branch.
 |---|---|---|
 | `ci.yaml` | pull request | `dart pub get`; `dart analyze`; `dart format --set-exit-if-changed`; unit tests for each package; `overtone content validate --strict`; `flutter build web` smoke build |
 | `deploy-app.yaml` | push to `main` touching `apps/**` or `packages/**` | test; `flutter build web --release --base-href /Overtone/`; publish to `gh-pages` root, keeping `content/` |
-| `deploy-content.yaml` | push to `main` touching `content/**` | `overtone content build --out dist/content`; publish to `gh-pages` `content/` only |
+| `deploy-content.yaml` | push to `main` touching `content/**` | `overtone content build --out dist/content`; publish the new `<buildId>/` snapshot and `manifest.json` to `gh-pages` `content/` only; prune all but the newest three snapshots |
 
 A content-only change never triggers a Flutter build.
 
@@ -651,8 +665,12 @@ A content-only change never triggers a Flutter build.
 - App files: Flutter 3.47 registers no service worker (spike S5), so app
   staleness is limited to normal HTTP caching (about 10 minutes on GitHub
   Pages). Keep it that way; do not add a service worker without a reason.
-- Content: manifest fetched with a timestamp query. Every other content file
-  is fetched with `?v=<hash>` from the manifest.
+- Content: only `manifest.json` is mutable; everything else lives in an
+  immutable `<buildId>/` snapshot (section 4.5). Do not rely on `?v=` query
+  strings: the Pages CDN ignores them. Expect up to about ten minutes before
+  a deploy is visible to a returning visitor.
+- Rapid consecutive pushes to `gh-pages` cancel the earlier Pages deploy run;
+  this is harmless because each push contains the full branch state.
 
 ### 11.5 Self-hosting and security headers
 

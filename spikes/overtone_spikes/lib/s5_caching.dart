@@ -50,6 +50,7 @@ class _S5CachingPageState extends State<S5CachingPage> {
     final out = <String, Object?>{
       'baseUri': web.document.baseURI,
       'userAgent': web.window.navigator.userAgent,
+      'appBuild': const String.fromEnvironment('APP_BUILD', defaultValue: '1'),
     };
     try {
       final regs =

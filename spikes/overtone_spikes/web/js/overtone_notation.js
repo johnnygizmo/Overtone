@@ -90,7 +90,7 @@
     }
 
     function rerender() {
-      if (!loaded) return;
+      if (!loaded || container.clientWidth === 0) return;
       osmd.render();
       rebuildIndex();
       applyHighlight();
@@ -113,6 +113,10 @@
     return {
       async load(xml) {
         await osmd.load(xml);
+        // The platform view can exist before layout gives it a width.
+        for (let i = 0; i < 120 && container.clientWidth === 0; i++) {
+          await new Promise((r) => requestAnimationFrame(r));
+        }
         loaded = true;
         osmd.render();
         rebuildIndex();

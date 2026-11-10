@@ -1,6 +1,6 @@
 # ADR 0007: GitHub Pages hosting and publishing (spike S1)
 
-Status: pending verification on GitHub Pages
+Status: accepted
 
 ## Plan being tested
 
@@ -11,14 +11,25 @@ Status: pending verification on GitHub Pages
 - Hash routing (`/#/...`) so refresh and deep links need no server support.
   Path URLs (`/Overtone/lesson/x`) would return 404 on Pages.
 
-## To verify
+## Results
 
-1. The spike loads at the Pages URL: app, fonts, scores, OSMD, and audio JS
-   resolve under `/Overtone/`.
-2. Deep links work and survive refresh: `?spike=S3`, `?spike=S5&auto=1`.
-3. A commit that changes only `content/` leaves the app files untouched and
-   is visible to the S5 page.
-4. A commit that replaces the app files but keeps `content/` leaves the
-   content intact.
+1. Passed. The spike loads at the Pages URL and the app, bundled Roboto,
+   scores, OSMD, and audio JS all resolve under `/Overtone/`. S2, S3, S4, S5,
+   and S6 pages ran there with no external hosts.
+2. Passed. `?spike=...` deep links load and survive refresh. Path URLs such
+   as `/Overtone/lesson/x` would 404, so the app uses hash routing.
+3. Passed. The content-only commit (`S5 content v2`) changed only
+   `content/manifest.json` and `content/probe.txt`.
+4. Passed. The app-only commit (`S5 app build 2`) changed only
+   `.last_build_id`, `flutter_bootstrap.js`, `js/overtone_notation.js`, and
+   `main.dart.js`; `content/` stayed at v2 and the live site served both.
 
-Record the results here when done.
+Other findings:
+
+- Pages must be set to deploy from the `gh-pages` branch (root), not `main`
+  and not GitHub Actions. A `.nojekyll` file belongs in `gh-pages`.
+- A push made while a Pages deploy is running cancels that run; the later run
+  deploys the whole branch state, so nothing is lost.
+- Updates take up to about ten minutes to reach returning visitors (ADR
+  0005), and content must be published as immutable snapshots.
+- Each Pages deploy takes about 30 seconds.

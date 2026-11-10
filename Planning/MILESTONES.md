@@ -52,12 +52,12 @@ Acceptance:
 
 Tasks:
 
-- [ ] **S1** Publish a minimal Flutter web build to `gh-pages` under
-      `/Overtone/`; test deep link and refresh with hash routing.
-      (Build ready in `spikes/overtone_spikes/build/pages`; waiting for the
-      push. Checklist in ADR 0007.)
-- [ ] **S1** Prove two path-scoped publishes (`app` and `content/`) coexist
-      without overwriting each other.
+- [x] **S1** Publish a minimal Flutter web build to `gh-pages` under
+      `/Overtone/`; test deep link and refresh with hash routing. Verified
+      live (ADR 0007).
+- [x] **S1** Prove two path-scoped publishes (`app` and `content/`) coexist
+      without overwriting each other. Verified: a content-only commit and an
+      app-only commit each touched only their own paths (ADR 0007).
 - [x] **S2** Prototype markdown rendering with wikilinks, callouts, embeds,
       and the four musical block types. (ADR 0001)
 - [x] **S3** Render representative scores with OSMD (bundled,
@@ -71,8 +71,10 @@ Tasks:
       confirm the autoplay gesture behaviour and timbre.
 - [x] **S5** (local) Meta CSP and self-hosting verified; no service worker
       (ADR 0005).
-- [ ] **S5** Verify content-only and app-only updates reach a returning
-      browser on GitHub Pages.
+- [x] **S5** Verify content-only and app-only updates reach a returning
+      browser on GitHub Pages. Both did, but only after the CDN entry
+      expired (about ten minutes); query strings do not bust it, so content
+      moves to immutable snapshots (ADR 0005, PLAN.md 4.5).
 - [x] **S6** Benchmark `sembast_web` including export and import
       (ADR 0004).
 - [x] **S7** Confirm `overtone_content` parsing behaves the same on the VM,
@@ -106,14 +108,16 @@ Tasks:
 - [ ] Asset checks and path-traversal protection.
 - [ ] Diagnostics with stable codes, suggestions, and `docs/diagnostics.md`.
 - [ ] `build` command: manifest, `nodes.json`, `graph.json`, `search.json`,
-      `media.json`, per-file content hashes.
+      `media.json`, per-file content hashes, immutable `<buildId>/`
+      snapshot directory and a `manifest.json` pointer (PLAN.md 4.5).
 - [ ] `new` command and Obsidian templates in `content/_templates/`.
 - [ ] Fixture vaults: one valid, plus one invalid vault per diagnostic code.
 
 App:
 
 - [ ] App shell, navigation, and responsive layout (phone, tablet, desktop).
-- [ ] `ContentSource` over HTTP with cache-busting.
+- [ ] `ContentSource` over HTTP: manifest read with a timestamp query, all
+      other URLs under the manifest's snapshot root.
 - [ ] Manifest, nodes, and graph providers; schema version check.
 - [ ] Subject browser and lesson page; markdown renderer with wikilinks,
       callouts, and image/SVG/MP3 embeds.
