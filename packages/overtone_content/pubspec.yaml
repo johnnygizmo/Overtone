@@ -1,0 +1,14 @@
+name: overtone_content
+description: Content vault parsing, validation, and index building for Overtone.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  music_domain: any
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

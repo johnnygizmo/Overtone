@@ -22,27 +22,27 @@ and runs in CI.
 
 Tasks:
 
-- [ ] Create the GitHub repository and choose the code license (MIT or
-      Apache-2.0).
-- [ ] Create the Dart workspace root `pubspec.yaml` with members
+- [x] Confirm the GitHub repository (`johnnygizmo/Overtone`) and keep the
+      GPL-3.0 code license already in `LICENSE`.
+- [x] Create the Dart workspace root `pubspec.yaml` with members
       `apps/overtone_web`, `packages/*`, `tools/overtone_cli`.
-- [ ] Scaffold `music_domain`, `overtone_content`, `exercise_engine`,
+- [x] Scaffold `music_domain`, `overtone_content`, `exercise_engine`,
       `learner_model` as pure Dart packages with a placeholder test each.
-- [ ] Scaffold `overtone_web` with `flutter create` (web only) and add
+- [x] Scaffold `overtone_web` with `flutter create` (web only) and add
       Riverpod and `go_router`.
-- [ ] Scaffold `overtone_cli` with a `content` command group and `--help`.
-- [ ] Add `analysis_options.yaml` shared by all members.
-- [ ] Add `README.md`, `LICENSE`, `CONTRIBUTING.md` (content under CC BY-SA),
+- [x] Scaffold `overtone_cli` with a `content` command group and `--help`.
+- [x] Add `analysis_options.yaml` shared by all members.
+- [x] Add `README.md`, `LICENSE`, `CONTRIBUTING.md` (content under CC BY-SA),
       `docs/adr/`.
-- [ ] Add `ci.yaml`: pub get, format check, analyze, tests, web build.
+- [x] Add `ci.yaml`: pub get, format check, analyze, tests, web build.
 
 Acceptance:
 
-- A fresh clone runs `dart pub get`, `dart analyze`, and the tests with no
-  manual steps.
-- CI is green on a pull request.
-- Package dependency directions match PLAN.md section 2.1 (checked by a
-  small script or lint in CI).
+- [x] A fresh clone runs `dart pub get`, `dart analyze`, and the tests with no
+  manual steps. (Verified locally; CI not yet run.)
+- [ ] CI is green on a pull request.
+- [x] Package dependency directions match PLAN.md section 2.1 (checked by
+  `tools/check_deps.dart`, run in CI).
 
 ------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ Acceptance:
 Tasks:
 
 - [ ] **S1** Publish a minimal Flutter web build to `gh-pages` under
-      `/overtone/`; test deep link and refresh with hash routing.
+      `/Overtone/`; test deep link and refresh with hash routing.
 - [ ] **S1** Prove two path-scoped publishes (`app` and `content/`) coexist
       without overwriting each other.
 - [ ] **S2** Prototype markdown rendering with wikilinks, callouts, embeds,

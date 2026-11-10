@@ -38,7 +38,7 @@ Single repository, Dart workspace, content kept separable.
 overtone/
   pubspec.yaml                  workspace root (lists members)
   README.md
-  LICENSE                       MIT or Apache-2.0 (code)
+  LICENSE                       GPL-3.0 (code)
   CONTRIBUTING.md               states CC BY-SA for content contributions
 
   apps/
@@ -611,7 +611,7 @@ Revisit only if the index becomes too large.
 ### 11.1 GitHub Pages model
 
 The site is served from the `gh-pages` branch at
-`https://<user>.github.io/overtone/`:
+`https://johnnygizmo.github.io/Overtone/`:
 
 ```text
 gh-pages/
@@ -630,15 +630,15 @@ Pages is configured to deploy from the branch.
 
 | Workflow | Trigger | Steps |
 |---|---|---|
-| `ci.yaml` | pull request | `dart pub get`; `dart analyze`; `dart format --set-exit-code`; unit tests for each package; `overtone content validate --strict`; `flutter build web` smoke build |
-| `deploy-app.yaml` | push to `main` touching `apps/**` or `packages/**` | test; `flutter build web --release --base-href /overtone/`; publish to `gh-pages` root, keeping `content/` |
+| `ci.yaml` | pull request | `dart pub get`; `dart analyze`; `dart format --set-exit-if-changed`; unit tests for each package; `overtone content validate --strict`; `flutter build web` smoke build |
+| `deploy-app.yaml` | push to `main` touching `apps/**` or `packages/**` | test; `flutter build web --release --base-href /Overtone/`; publish to `gh-pages` root, keeping `content/` |
 | `deploy-content.yaml` | push to `main` touching `content/**` | `overtone content build --out dist/content`; publish to `gh-pages` `content/` only |
 
 A content-only change never triggers a Flutter build.
 
 ### 11.3 Base path and content root
 
-- `--base-href /overtone/` is set at build time. A custom domain later
+- `--base-href /Overtone/` is set at build time. A custom domain later
   changes only this flag.
 - The content root defaults to `content/` resolved against the document's
   base URI, so the same build works under any base path. It can be
@@ -707,7 +707,7 @@ decision in `docs/adr/`.
 
 | Id | Question | Pass criteria |
 |---|---|---|
-| S1 | Does a Flutter web build load, route, and refresh correctly from GitHub Pages under `/overtone/`? | Deep link and refresh work; `--base-href` correct; fonts and assets load |
+| S1 | Does a Flutter web build load, route, and refresh correctly from GitHub Pages under `/Overtone/`? | Deep link and refresh work; `--base-href` correct; fonts and assets load |
 | S2 | Can `package:markdown` with custom syntaxes plus an in-repo renderer cover section 4.4? | Wikilinks, callouts, embeds, and all four block kinds render from a sample note |
 | S3 | Does OSMD render the sample MusicXML set acceptably, bundled locally, in `HtmlElementView`, and report note clicks? | Treble/bass, key/time signatures, chords, ties render; click returns measure and index; resize works. Otherwise evaluate Verovio |
 | S4 | Is the custom Web Audio engine accurate and click-free on desktop and phone Chrome? | Intervals and triads schedule on the audio clock; `stop` and replace are clean; no clipping at full volume; gesture unlock works |
@@ -738,7 +738,9 @@ decision in `docs/adr/`.
 
 - Exact GitHub user or organization and repository name (affects
   `--base-href`).
-- Choice of MIT versus Apache-2.0.
+- License is GPL-3.0 for code (decided); content is CC BY-SA. Verify that
+  every bundled third-party library (for example OSMD) is GPL-3.0
+  compatible.
 - Whether the app should offer an "advanced" display mode for note names
   later (out of scope, English only for v1).
 - Math rendering format (deferred; not needed for the MVP content).

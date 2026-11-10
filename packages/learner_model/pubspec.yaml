@@ -1,0 +1,14 @@
+name: learner_model
+description: Attempts, mastery estimation, and recommendations for Overtone.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  exercise_engine: any
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

@@ -11,7 +11,7 @@
 assets\
 **Monetization principle:** Core learning content and training remain
 free. Version 1 offers a Patreon/donation link only; advertising is deferred (see 4.3). 
-**License:** code under MIT or Apache-2.0; content under CC BY-SA (see section 14).
+**License:** code under GPL-3.0; content under CC BY-SA (see section 14).
 
 ------------------------------------------------------------------------
 
@@ -1330,8 +1330,7 @@ useful error for that item and continue loading other valid content.
 
 **Project licenses:**
 
--   App and CLI code: MIT or Apache-2.0 (choose one before the first
-    public commit).
+-   App and CLI code: GPL-3.0.
 -   Lesson content: CC BY-SA.
 -   Third-party assets keep their own licenses and are tracked
     individually.
@@ -1608,7 +1607,7 @@ capability without requiring a huge content library.
 | MIDI | Future enhancement; not in the first release |
 | Monetization | Patreon link only in version 1; advertising deferred |
 | Audience | Adults and teens, general audience |
-| Licensing | Code: MIT or Apache-2.0; content: CC BY-SA |
+| Licensing | Code: GPL-3.0; content: CC BY-SA |
 | Localization | English only; keep UI strings extractable |
 | Note names | English (C D E, major/minor) |
 | Sound source | Synthesis for the MVP; samples later |

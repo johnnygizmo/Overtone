@@ -1,0 +1,18 @@
+name: overtone_workspace
+description: Workspace root for Overtone. Not published.
+publish_to: none
+
+environment:
+  sdk: ^3.13.7
+
+workspace:
+  - apps/overtone_web
+  - packages/music_domain
+  - packages/overtone_content
+  - packages/exercise_engine
+  - packages/learner_model
+  - tools/overtone_cli
+
+dev_dependencies:
+  lints: ^6.0.0
+  yaml: ^3.1.4
