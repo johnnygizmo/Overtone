@@ -34,6 +34,12 @@ jobs:
             (cd "$d" && dart test)
           done
 
+      - name: Test content parser in Chrome (dart2js and Wasm)
+        run: |
+          cd packages/overtone_content
+          dart test -p chrome
+          dart test -p chrome -c dart2wasm
+
       - name: Test web app
         run: cd apps/overtone_web && flutter test
 

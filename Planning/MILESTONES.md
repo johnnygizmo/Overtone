@@ -54,23 +54,31 @@ Tasks:
 
 - [ ] **S1** Publish a minimal Flutter web build to `gh-pages` under
       `/Overtone/`; test deep link and refresh with hash routing.
+      (Build ready in `spikes/overtone_spikes/build/pages`; waiting for the
+      push. Checklist in ADR 0007.)
 - [ ] **S1** Prove two path-scoped publishes (`app` and `content/`) coexist
       without overwriting each other.
-- [ ] **S2** Prototype markdown rendering with wikilinks, callouts, embeds,
-      and the four musical block types.
-- [ ] **S3** Create 5 to 8 representative scores in MuseScore Studio, export
-      MusicXML, render with OSMD (bundled, `HtmlElementView`); test note
-      click and resize. If it fails, repeat with Verovio.
-- [ ] **S4** Build the Web Audio engine prototype: unlock, play a note,
-      interval, triad; replace playback cleanly; measure timing; test on
-      desktop and Android Chrome.
+- [x] **S2** Prototype markdown rendering with wikilinks, callouts, embeds,
+      and the four musical block types. (ADR 0001)
+- [x] **S3** Render representative scores with OSMD (bundled,
+      `HtmlElementView`); test note click and resize. Done with five
+      hand-written MusicXML scores (ADR 0002).
+- [ ] **S3** Re-test with real MuseScore Studio exports (5 to 8 scores).
+- [x] **S4** Build the Web Audio engine prototype: unlock, play a note,
+      interval, triad; replace playback cleanly; measure timing. Offline
+      checks pass (ADR 0003).
+- [ ] **S4** Listen on desktop Chrome, Firefox, Edge and Android Chrome;
+      confirm the autoplay gesture behaviour and timbre.
+- [x] **S5** (local) Meta CSP and self-hosting verified; no service worker
+      (ADR 0005).
 - [ ] **S5** Verify content-only and app-only updates reach a returning
-      browser; test meta CSP.
-- [ ] **S6** Benchmark `sembast_web` with 50k synthetic attempts, including
-      export and import.
-- [ ] **S7** Confirm `overtone_content` parsing behaves the same on the VM
-      and in Chrome.
-- [ ] Write one ADR per spike with the decision.
+      browser on GitHub Pages.
+- [x] **S6** Benchmark `sembast_web` including export and import
+      (ADR 0004).
+- [x] **S7** Confirm `overtone_content` parsing behaves the same on the VM,
+      dart2js, and dart2wasm (ADR 0006).
+- [x] Write one ADR per spike with the decision (S1 and S5 hold pending
+      items).
 
 Acceptance:
 

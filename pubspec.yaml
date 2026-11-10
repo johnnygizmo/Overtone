@@ -12,6 +12,7 @@ workspace:
   - packages/exercise_engine
   - packages/learner_model
   - tools/overtone_cli
+  - spikes/overtone_spikes
 
 dev_dependencies:
   lints: ^6.0.0

@@ -16,10 +16,10 @@ a choice depends on a Phase 0 spike, it says so.
 |---|---|
 | Flutter | 3.47.8 stable (installed) |
 | Dart | 3.13.7 (installed). Dart workspaces (pub workspaces) are available |
-| Web renderer | Flutter's default web renderer (CanvasKit/Skwasm); verify in spike S1 |
+| Web renderer | Flutter's default web renderer (CanvasKit/Skwasm), self-hosted with `--no-web-resources-cdn` (ADR 0005) |
 | State management | Riverpod |
 | Routing | `go_router`, hash URL strategy |
-| Local storage | `sembast_web` (IndexedDB) behind a storage interface; confirm in spike S6 |
+| Local storage | `sembast_web` (IndexedDB) behind a storage interface (ADR 0004) |
 | Notation | OpenSheetMusicDisplay (OSMD), bundled locally, via `dart:js_interop` |
 | Audio | Custom Web Audio engine via `dart:js_interop` |
 | Content tooling | Dart CLI (`overtone`) |
@@ -311,8 +311,8 @@ Roman numerals, and voice leading come after the MVP.
   block quotes that start with `> [!type]`.
 - Render the AST with an in-repo `NodeRenderer` that maps node types to
   widgets. Reason: the Flutter markdown widget packages have had maintenance
-  changes, and custom blocks plus accessibility need control. Confirm in
-  spike S2 before committing.
+  changes, and custom blocks plus accessibility need control. Confirmed by
+  spike S2 (ADR 0001).
 - Raw HTML is never rendered. It is shown as plain text.
 - Block widgets are registered in a `BlockRegistry` keyed by language tag,
   sharing the `BlockSpec` definitions from `overtone_content`.
@@ -321,8 +321,9 @@ Roman numerals, and voice leading come after the MVP.
 
 ### 6.2 Notation (OSMD)
 
-- OSMD is vendored into `apps/overtone_web/web/js/` as a built bundle, with
-  its license file. No CDN.
+- OSMD 2.3.0 (BSD-3-Clause) is vendored into `apps/overtone_web/web/js/` as a
+  built bundle, with its license file. No CDN. It is about 1.5 MB, so load it
+  lazily on pages that contain a `notation` block (ADR 0002).
 - Flutter integration: an `HtmlElementView` hosts a `div`. A thin JS module
   `overtone_notation.js` wraps OSMD and exposes:
   `load(containerId, musicXmlString, options)`, `highlight(measure, beat)`,
@@ -647,17 +648,22 @@ A content-only change never triggers a Flutter build.
 
 ### 11.4 Caching
 
-- App files: Flutter's service worker handles app caching; verify that
-  updates are picked up (spike S5). Decide whether to disable the service
-  worker if it causes stale builds.
+- App files: Flutter 3.47 registers no service worker (spike S5), so app
+  staleness is limited to normal HTTP caching (about 10 minutes on GitHub
+  Pages). Keep it that way; do not add a service worker without a reason.
 - Content: manifest fetched with a timestamp query. Every other content file
   is fetched with `?v=<hash>` from the manifest.
 
-### 11.5 Security headers
+### 11.5 Self-hosting and security headers
 
-GitHub Pages does not allow custom response headers. Use a `<meta>` CSP in
-`index.html` as far as Flutter's requirements allow, and record the limits in
-`docs/`. Validate in spike S5.
+- Build with `--no-web-resources-cdn` and bundle Roboto as an asset, so no
+  request leaves the app's own origin (the default build fetches CanvasKit
+  and Roboto from Google). Verified in the spike (ADR 0005).
+- GitHub Pages does not allow custom response headers. Use a `<meta>` CSP in
+  `index.html`. This policy worked with Flutter web, OSMD, and the audio
+  engine:
+  `default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'`.
+  `frame-ancestors` and reporting cannot be set this way.
 
 ------------------------------------------------------------------------
 
@@ -724,7 +730,7 @@ decision in `docs/adr/`.
 | OSMD fidelity or interaction is insufficient | Spike S3; Verovio fallback behind `NotationController` |
 | Web audio timing differs by browser | Spike S4; schedule on the audio clock; document unsupported browsers |
 | Two workflows publishing to one Pages site race or overwrite | Branch deployment with path-scoped publishing and a shared concurrency group; verify in S1 |
-| Service worker serves stale app builds | Spike S5; consider disabling the service worker |
+| Service worker serves stale app builds | Flutter 3.47 registers none (S5); revisit only if one is added |
 | Content schema drift breaks old content | `schemaVersion`, strict validation in CI, fixtures for every note type |
 | Obsidian "full compatibility" expands scope | Supported syntax is the list in section 4.4; the validator warns on anything else |
 | Browser storage cleared or evicted | Persistent-storage request, export reminders, clear wording about backups |
