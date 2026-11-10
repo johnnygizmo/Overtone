@@ -91833,7 +91833,7 @@ return A.w($async$rk,r)},
 p0(){var s=0,r=A.x(t.H),q=1,p=[],o=this,n,m,l,k,j,i,h,g,f,e,d,c,b,a
 var $async$p0=A.y(function(a0,a1){if(a0===1){p.push(a1)
 s=q}for(;;)switch(s){case 0:e=v.G
-d=A.as(["baseUri",e.document.baseURI,"userAgent",e.window.navigator.userAgent],t.N,t.X)
+d=A.as(["baseUri",e.document.baseURI,"userAgent",e.window.navigator.userAgent,"appBuild","2"],t.N,t.X)
 q=3
 s=6
 return A.n(A.eg(e.window.navigator.serviceWorker.getRegistrations(),t.ef),$async$p0)
